@@ -17,4 +17,23 @@ CHIP DMux4Way {
 
     PARTS:
     // Put your code here:
+    
+    Not(in=sel[0], out=notsel0); 
+    Not(in=sel[1], out=notsel1); 
+
+    // sel == 00, both not bits should be 1
+    And(a=notsel0, b=notsel1, out=sela); // X0 && 0X == 00
+    And(a=in, b=sela, out=a);    
+
+    // sel == 01, the last bit should be 1
+    And(a=notsel1, b=sel[0], out=selb); // 0X && X1 == 01 
+    And(a=in, b=selb, out=b);    
+
+    // sel == 10, the first bit should be 1
+    And(a=notsel0, b=sel[1], out=selc); // X0 && 1X == 10
+    And(a=in, b=selc, out=c);    
+
+    // sel == 11, both bits should be 1
+    And(a=sel[0], b=sel[1], out=seld); // X1 && 1X == 11
+    And(a=in, b=seld, out=d);    
 }

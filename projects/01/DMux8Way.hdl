@@ -17,4 +17,46 @@ CHIP DMux8Way {
 
     PARTS:
     // Put your code here:
+    Not(in=sel[0], out=notsel0); 
+    Not(in=sel[1], out=notsel1); 
+    Not(in=sel[2], out=notsel2); 
+    And(a=notsel0, b=notsel1, out=notsel01); // XX0 && X0X == X00
+    And(a=notsel1, b=notsel2, out=notsel12); // X0X && 0XX == 00X
+
+    // sel == 000, all not bits should be 1
+    And(a=notsel01, b=notsel12, out=sela); // X00 && 00X == 000
+    And(a=in, b=sela, out=a);    
+
+    // sel == 001, the last bit should be 1
+    And(a=notsel12, b=sel[0], out=selb); // 00X && XX1 == 001 
+    And(a=in, b=selb, out=b);    
+    
+    // sel == 010, the inner bit should be 1
+    And(a=notsel0, b=sel[1], out=selxc); // XX0 && X1X == X10
+    And(a=notsel2, b=selxc, out=selc); // 0XX && X10 == 010 
+    And(a=in, b=selc, out=c);   
+
+    // sel == 011, the last two bits should be 1
+    And(a=sel[0], b=sel[1], out=selxd); // XX1 && X1X == X11
+    And(a=notsel2, b=selxd, out=seld); // 0XX && X10 == 011 
+    And(a=in, b=seld, out=d);  
+
+    // sel == 100, the first bit should be 1
+    And(a=sel[2], b=notsel01, out=sele); // 1XX && X00 == 100 
+    And(a=in, b=sele, out=e);   
+
+    // sel == 101
+    And(a=notsel1, b=sel[0], out=selxf); // 00X && XX1 == X01 
+    And(a=sel[2], b=selxf, out=self); // 1XX && X01 == 101 
+    And(a=in, b=self, out=f);     
+
+    // sel == 110
+    And(a=notsel0, b=sel[1], out=selxg); // X00 && X10 == X10 
+    And(a=sel[2], b=selxg, out=selg); // 1XX && X10 == 110 
+    And(a=in, b=selg, out=g);    
+
+    // sel == 111
+    And(a=sel[0], b=sel[1], out=selxh); // X01 && X10 == X11 
+    And(a=sel[2], b=selxh, out=selh); // 1XX && X11 == 111 
+    And(a=in, b=selh, out=h);
 }

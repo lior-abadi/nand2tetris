@@ -15,4 +15,16 @@ CHIP And {
 
     PARTS:
     // Put your code here:
+    // Way 1: Using previous gates
+    Nand(a=a, b=b, out=c);
+    Not(in=c, out=out);   
+
+    // Way 2: Using 3 Nand
+    // Nand(a=a, b=b, out=c);
+    // Nand(a=a, b=b, out=d);
+    // Nand(a=c, b=d, out=out);
+
+    // Way 3: Using 2 Nand
+    // Nand(a=a, b=b, out=c);
+    // Nand(a=c, b=c, out=out);
 }
