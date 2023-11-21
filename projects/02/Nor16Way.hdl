@@ -1,0 +1,8 @@
+CHIP Nor16Way {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+    Or16Way(in=in, out=outor);
+    Not(in=outor, out=out);
+}

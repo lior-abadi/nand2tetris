@@ -43,4 +43,38 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+
+   // X: 1st Condition: if (zx == 1) set x = 0
+   Mux16(a=x, b=false, sel=zx, out=setXToZero); // sel == 0 returns x, sel == 1 returns 0
+
+   // X: 2nd Condition: if (nx == 1) set x = !x
+   Not16(in=setXToZero, out=notx);
+   Mux16(a=setXToZero, b=notx, sel=nx, out=filterX); // sel == 0 returns setXToZero, sel == 1 returns notx (which depends on condition 1)
+
+   // Y: 1st Condition: if (zy == 1) set y = 0   
+   Mux16(a=y, b=false, sel=zy, out=setYToZero);
+
+   // Y: 2nd Condition: if (ny == 1) set y = !y
+   Not16(in=setYToZero, out=noty);
+   Mux16(a=setYToZero, b=noty, sel=ny, out=filterY);
+     
+   // f: if (f == 1)  set out = x + y 
+   And16(a=filterX, b=filterY, out=XandY);
+   Add16(a=filterX, b=filterY, out=XplusY);
+    
+   Mux16(a=XandY, b=XplusY, sel=f, out=filterF);
+
+   // if (no == 1) set out = !out
+   Not16(in=filterF, out=notFilterF);
+   Mux16(a=filterF, b=notFilterF, sel=no, out=out1);
+   
+   // if (out == 0) set zr = 1
+   Nor16Way(in=out1, out=outnor);
+   Mux(a=false, b=true, sel=outnor, out=zr); // nor will output 1 only if both inputs are zero.
+
+   // if (out < 0) set ng = 1, by checking the most significant bit
+   GetMSB(in=out1, out=negOut);
+   Mux(a=false, b=true, sel=negOut, out=ng);
+
+   Or16(a=out1, b=false, out=out);  
 }
